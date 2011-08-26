@@ -8,8 +8,7 @@ by the user.
 
 Just use =alert= instead of =message= as follows:
 
-#+begin_src lisp
-  (require 'alert)
+```  (require 'alert)
 
   ;; This is the most basic form usage
   (alert "This is an alert")
@@ -27,7 +26,7 @@ Just use =alert= instead of =message= as follows:
   ;; Further, alerts can have categories.  This allows users to
   ;; selectively filter on them.
   (alert "This is an alert" :title "My Alert" :category 'debug)
-#+end_src
+'''
 
 * For users
 
@@ -73,8 +72,7 @@ customizing =alert-user-configuration=.  Here is one that the author
 currently uses with ERC, so that the fringe gets colored whenever people
 chat on BitlBee:
 
-#+begin_src lisp
- (alert-add-rule :status   '(buried visible idle)
+``` (alert-add-rule :status   '(buried visible idle)
                  :severity '(moderate high urgent)
                  :mode     'erc-mode
                  :predicate
@@ -91,7 +89,7 @@ chat on BitlBee:
                      (memq (plist-get info :status) '(buried idle)))
                  :style 'fringe
                  :continue t)
-#+end_src
+'''
 
 * Builtin alert styles
 
@@ -111,8 +109,7 @@ a function that receives the details of the alert.  These details are
 given in a plist which uses various keyword to identify the parts of the
 alert.  Here is a prototypical style definition:
 
-#+begin_src lisp
- (alert-define-style 'style-name :title "My Style's title"
+``` (alert-define-style 'style-name :title "My Style's title"
                      :notifier
                      (lambda (info)
                        ;; The message text is :message
@@ -146,4 +143,4 @@ alert.  Here is a prototypical style definition:
                        ;; It is the same property list that was passed to
                        ;; the notifier function.
                        ))
-#+end_src
+'''
