@@ -197,7 +197,7 @@ This is used by styles external to Emacs that don't understand faces."
   :type '(alist :key-type symbol :value-type color)
   :group 'alert)
 
-(defcustom alert-reveal-idle-time 5
+(defcustom alert-reveal-idle-time 15
   "If idle this many seconds, rules will match the `idle' property."
   :type 'integer
   :group 'alert)
