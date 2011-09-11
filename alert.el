@@ -403,6 +403,7 @@ definition:
                     :notifier #'ignore
                     :remover #'ignore)
 
+;;;###autoload
 (defun* alert-add-rule (&key severity status mode category title
                              message predicate (style alert-default-style)
                              persistent continue never-persist append)
