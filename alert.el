@@ -773,8 +773,9 @@ Here are some more typical examples of usage:
                 (setq matched t)
 
                 (let ((remover (plist-get style-def :remover)))
-                  (add-to-list 'alert-active-alerts
-                               (list alert-buffer info remover))
+                  (if nil
+                      (add-to-list 'alert-active-alerts
+                                   (list alert-buffer info remover)))
                   (with-current-buffer alert-buffer
                     (add-hook 'post-command-hook
                               'alert-remove-on-command nil t))
