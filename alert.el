@@ -1,10 +1,11 @@
 ;;; alert --- Growl-style notification system for Emacs
 
-;; Copyright (C) 2011 John Wiegley
+;; Copyright (C) 2011-2013 John Wiegley
 
 ;; Author: John Wiegley <jwiegley@gmail.com>
 ;; Created: 24 Aug 2011
-;; Version: 1.0
+;; Updated: 17 Feb 2013
+;; Version: 1.1
 ;; Keywords: notification emacs message
 ;; X-URL: https://github.com/jwiegley/alert
 
@@ -124,6 +125,7 @@
 ;;   ignore   - Ignores the alert entirely
 ;;   fringe   - Changes the current frame's fringe background color
 ;;   growl    - Uses Growl on OS X, if growlnotify is on the PATH
+;;   notifier - Uses terminal-notifier on OS X, if it is on the PATH
 ;;
 ;; * Defining new styles
 ;;
@@ -576,6 +578,23 @@ This is found in the Growl Extras: http://growl.info/extras.php."
 
 (alert-define-style 'growl :title "Notify using Growl"
                     :notifier #'alert-growl-notify)
+
+(defcustom alert-notifier-command (executable-find "terminal-notifier")
+  "Path to the terminal-notifier command.
+From https://github.com/alloy/terminal-notifier."
+  :type 'file
+  :group 'alert)
+
+(defun alert-notifier-notify (info)
+  (if alert-notifier-command
+      (let ((args
+             (list "-title"   (alert-encode-string (plist-get info :title))
+                   "-message" (alert-encode-string (plist-get info :message)))))
+        (apply #'call-process alert-notifier-command nil nil nil args))
+    (alert-message-notify info)))
+
+(alert-define-style 'notifier :title "Notify using terminal-notifier"
+                    :notifier #'alert-notifier-notify)
 
 (defun alert-frame-notify (info)
   (let ((buf (plist-get info :buffer)))
