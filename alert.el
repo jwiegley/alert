@@ -1,4 +1,4 @@
-;;; alert --- Growl-style notification system for Emacs
+;;; alert.el --- Growl-style notification system for Emacs
 
 ;; Copyright (C) 2011-2013 John Wiegley
 
