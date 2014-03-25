@@ -483,22 +483,21 @@ fringe gets colored whenever people chat on BitlBee:
     rule))
 
 (alert-define-style 'ignore :title "Don't display alerts")
-
-(defun alert-colorize-message (message severity)
-  (set-text-properties 0 (length message)
-                       (list 'face (cdr (assq severity
-                                              alert-severity-faces)))
-                       message)
-  message)
 
+
 (defun alert-log-notify (info)
+  (let* ((mes (plist-get info :message))
+         (sev (plist-get info :severity))
+         (len (length mes)))
   (with-current-buffer
       (get-buffer-create "*Alerts*")
     (goto-char (point-max))
-    (insert (format-time-string "%H:%M %p - ")
-            (alert-colorize-message (plist-get info :message)
-                                    (plist-get info :severity))
-            ?\n)))
+    (insert (format-time-string "%H:%M %p - "))
+    (insert mes)
+    (set-text-properties (- (point) len) (point)
+                       (list 'face (cdr (assq sev
+                                              alert-severity-faces))))
+    (insert ?\n))))
 
 (defun alert-log-clear (info)
   (with-current-buffer
@@ -514,8 +513,7 @@ fringe gets colored whenever people chat on BitlBee:
                     )
 
 (defun alert-message-notify (info)
-  (message (alert-colorize-message (plist-get info :message)
-                                   (plist-get info :severity)))
+  (message  (plist-get info :message))
   ;;(if (memq (plist-get info :severity) '(high urgency))
   ;;    (ding))
   )
