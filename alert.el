@@ -585,6 +585,7 @@ This is found in the Growl Extras: http://growl.info/extras.php."
   :type 'string
   :group 'alert)
 
+(when (featurep 'gntp)
 (defun alert-gntp-notify (info)
   (gntp-notify 'alert
                (alert-encode-string (plist-get info :title))
@@ -597,7 +598,7 @@ This is found in the Growl Extras: http://growl.info/extras.php."
                (alert-message-notify info))
 
 (alert-define-style 'gntp :title "Notify using gntp"
-                    :notifier #'alert-gntp-notify)
+                    :notifier #'alert-gntp-notify))
 
 
 (defcustom alert-notifier-command (executable-find "terminal-notifier")
