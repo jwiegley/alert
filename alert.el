@@ -6,6 +6,7 @@
 ;; Created: 24 Aug 2011
 ;; Updated: 17 Feb 2013
 ;; Version: 1.1
+;; Package-Requires: ((gntp "0.1"))
 ;; Keywords: notification emacs message
 ;; X-URL: https://github.com/jwiegley/alert
 
@@ -171,6 +172,7 @@
 
 (eval-when-compile
   (require 'cl))
+(require 'gntp nil t)
 
 (defgroup alert nil
   "Notification system for Emacs similar to Growl"
@@ -576,6 +578,28 @@ This is found in the Growl Extras: http://growl.info/extras.php."
 
 (alert-define-style 'growl :title "Notify using Growl"
                     :notifier #'alert-growl-notify)
+
+(defcustom alert-gntp-icon
+  "http://cvs.savannah.gnu.org/viewvc/*checkout*/emacs/emacs/etc/images/icons/hicolor/48x48/apps/emacs.png"
+  "Icon file using gntp."
+  :type 'string
+  :group 'alert)
+
+(when (featurep 'gntp)
+(defun alert-gntp-notify (info)
+  (gntp-notify 'alert
+               (alert-encode-string (plist-get info :title))
+               (alert-encode-string (plist-get info :message))
+                                    gntp-server nil
+                                    (number-to-string
+                                 (cdr (assq (plist-get info :severity)
+                                            alert-growl-priorities)))
+                                    alert-gntp-icon)
+               (alert-message-notify info))
+
+(alert-define-style 'gntp :title "Notify using gntp"
+                    :notifier #'alert-gntp-notify))
+
 
 (defcustom alert-notifier-command (executable-find "terminal-notifier")
   "Path to the terminal-notifier command.
