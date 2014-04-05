@@ -286,7 +286,10 @@ it is strictly a fallback."
                   regexp)
             (cons :tag "Predicate"
                   (const :format "" :predicate)
-                  function)))
+                  function)
+            (cons :tag "Icon"
+                  (const :format "" :icon)
+                  regexp)))
          (alert-styles-radio-type 'choice)
          '(set :tag "Options"
                (cons :tag "Make alert persistent"
@@ -465,6 +468,8 @@ fringe gets colored whenever people chat on BitlBee:
         (nconc (nth 0 rule) (list (cons :message message))))
     (if predicate
         (nconc (nth 0 rule) (list (cons :predicate predicate))))
+    (if icon
+        (nconc (nth 0 rule) (list (cons :icon icon))))
     (setcar rule (cdr (nth 0 rule)))
 
     (if persistent
@@ -594,7 +599,9 @@ This is found in the Growl Extras: http://growl.info/extras.php."
                                     (number-to-string
                                  (cdr (assq (plist-get info :severity)
                                             alert-growl-priorities)))
-                                    alert-gntp-icon)
+                                    (if (eq (plist-get info :icon) nil)
+                                        alert-gntp-icon
+                                      (plist-get info :icon)))
                (alert-message-notify info))
 
 (alert-define-style 'gntp :title "Notify using gntp"
@@ -686,7 +693,7 @@ From https://github.com/alloy/terminal-notifier."
       (setq alert-active-alerts (delq alert alert-active-alerts)))))
 
 ;;;###autoload
-(defun* alert (message &key (severity 'normal) title category
+(defun* alert (message &key (severity 'normal) title icon category
                        buffer mode data style persistent never-persist)
   "Alert the user that something has happened.
 MESSAGE is what the user will see.  You may also use keyword
@@ -741,6 +748,7 @@ Here are some more typical examples of usage:
 
     (let ((base-info (list :message message
                            :title (or title current-buffer-name)
+                           :icon icon
                            :severity severity
                            :category category
                            :buffer alert-buffer
@@ -805,7 +813,9 @@ Here are some more typical examples of usage:
                                (:message
                                 (string-match (cdr condition) message))
                                (:predicate
-                                (funcall (cdr condition) info))))
+                                (funcall (cdr condition) info))
+                               (:icon
+                                (string-match (cdr condition) icon))))
                          (nth 0 config)))))
 
                 (let ((notifier (plist-get style-def :notifier)))
