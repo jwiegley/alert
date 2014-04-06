@@ -121,12 +121,13 @@
 ;; There are several builtin styles, and it is trivial to create new ones.
 ;; The builtins are:
 ;;
-;;   message  - Uses the Emacs `message' facility
-;;   log      - Logs the alert text to *Alerts*, with a timestamp
-;;   ignore   - Ignores the alert entirely
-;;   fringe   - Changes the current frame's fringe background color
-;;   growl    - Uses Growl on OS X, if growlnotify is on the PATH
-;;   notifier - Uses terminal-notifier on OS X, if it is on the PATH
+;;   message   - Uses the Emacs `message' facility
+;;   log       - Logs the alert text to *Alerts*, with a timestamp
+;;   ignore    - Ignores the alert entirely
+;;   fringe    - Changes the current frame's fringe background color
+;;   growl     - Uses Growl on OS X, if growlnotify is on the PATH
+;;   libnotify - Uses libnotify if notify-send is on the PATH
+;;   notifier  - Uses terminal-notifier on OS X, if it is on the PATH
 ;;
 ;; * Defining new styles
 ;;
@@ -419,7 +420,7 @@ definition:
 
 Normally, users should custoimze `alert-user-configuration'.
 This facility is for module writers and users that need to do
-things the Lisp way.  
+things the Lisp way.
 
 Here is a rule the author currently uses with ERC, so that the
 fringe gets colored whenever people chat on BitlBee:
@@ -584,6 +585,63 @@ This is found in the Growl Extras: http://growl.info/extras.php."
 
 (alert-define-style 'growl :title "Notify using Growl"
                     :notifier #'alert-growl-notify)
+
+
+(defcustom alert-libnotify-command (executable-find "notify-send")
+  "Path to the notify-send command.
+This is found in the libnotify-bin package in Debian based
+systems."
+  :type 'file
+  :group 'alert)
+
+(defcustom alert-libnotify-priorities
+  '((urgent   . critical)
+    (high     . critical)
+    (moderate . normal)
+    (normal   . normal)
+    (low      . low)
+    (trivial  . low))
+  "A mapping of alert severities onto libnotify priority values."
+  :type '(alist :key-type symbol :value-type symbol)
+  :group 'alert)
+
+(defun alert-libnotify-notify (info)
+  "Send INFO using notify-send.
+Handles :ICON, :CATEGORY, :SEVERITY, :PERSISTENT, :NEVER-PERSIST, :TITLE
+and :MESSAGE keywords from the INFO plist.  :CATEGORY can be
+passed as a single symbol, a string or a list of symbols or
+strings."
+  (if alert-libnotify-command
+      (let* ((args
+              (list "--icon"     (or (plist-get info :icon) "Emacs")
+                    "--app-name" "Emacs"
+                    "--urgency"  (symbol-name
+                                  (cdr (assq (plist-get info :severity)
+                                             alert-libnotify-priorities)))))
+             (category (plist-get info :category)))
+        (if (and (plist-get info :persistent)
+                 (not (plist-get info :never-persist)))
+            (nconc args (list "--expire-time 0")))
+        (when category
+          (nconc args
+                 (list "--category"
+                       (cond ((symbolp category)
+                              (symbol-name category))
+                             ((stringp category))
+                             ((listp category)
+                              (mapconcat (if (symbolp (car category))
+                                             #'symbol-name
+                                           #'identity)
+                                         category ","))))))
+        (nconc args (list
+                     (alert-encode-string (plist-get info :title))
+                     (alert-encode-string (plist-get info :message))))
+        (apply #'call-process alert-libnotify-command nil nil nil args))
+    (alert-message-notify info)))
+
+(alert-define-style 'libnotify :title "Notify using libnotify"
+                    :notifier #'alert-libnotify-notify)
+
 
 (defcustom alert-gntp-icon
   "http://cvs.savannah.gnu.org/viewvc/*checkout*/emacs/emacs/etc/images/icons/hicolor/48x48/apps/emacs.png"
@@ -877,4 +935,3 @@ Here are some more typical examples of usage:
 (provide 'alert)
 
 ;;; alert.el ends here
-
