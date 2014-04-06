@@ -173,6 +173,7 @@
 (eval-when-compile
   (require 'cl))
 (require 'gntp nil t)
+(require 'notifications nil t)
 
 (defgroup alert nil
   "Notification system for Emacs similar to Growl"
@@ -606,6 +607,31 @@ This is found in the Growl Extras: http://growl.info/extras.php."
 
 (alert-define-style 'gntp :title "Notify using gntp"
                     :notifier #'alert-gntp-notify))
+
+
+(defcustom alert-notifications-priorities
+  '((urgent   . critical)
+    (high     . critical)
+    (moderate . normal)
+    (normal   . normal)
+    (low      . low)
+    (trivial  . low))
+  "A mapping of alert severities onto Growl priority values."
+  :type '(alist :key-type symbol :value-type integer)
+  :group 'alert)
+
+(when (featurep 'notifications)
+(defun alert-notifications-notify (info)
+  (notifications-notify :title (plist-get info :title)
+                      :body  (plist-get info :message)
+                      :app-icon (plist-get info :icon)
+                      :urgency (cdr (assq (plist-get info :severity)
+                                            alert-notifications-priorities))
+)
+               (alert-message-notify info))
+
+(alert-define-style 'notifications :title "Notify using notifications"
+                    :notifier #'alert-notifications-notify))
 
 
 (defcustom alert-notifier-command (executable-find "terminal-notifier")
