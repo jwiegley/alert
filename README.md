@@ -33,32 +33,32 @@ For the user, there are several variables to control when and how alerts
 are presented.  By default, they appear in the minibuffer much the same
 as a normal Emacs message.  But there are many more possibilities:
 
-  - `alert-fade-time` ::
+  - `alert-fade-time`  
     Normally alerts disappear after this many seconds, if the style
     supports it.  The default is 5 seconds.
 
-  - `alert-default-style` ::
+  - `alert-default-style`  
     Pick the style to use if no other config rule matches.  The
-    default is =message=, but =growl= works well too.
+    default is `message`, but =growl= works well too.
 
-  - `alert-reveal-idle-time` ::
-    If a config rule choose to match on =idle=, this is how many
+  - `alert-reveal-idle-time`  
+    If a config rule choose to match on `idle`, this is how many
     seconds idle the user has to be.  Defaults to 5 so that users
     don't miss any alerts, but 120 is also good.
 
-  - `alert-persist-idle-time` ::
+  - `alert-persist-idle-time`  
     After this many idle seconds, alerts will become sticky, and not
     fade away more.  The default is 15 minutes.
 
-  - `alert-log-messages` ::
+  - `alert-log-messages`  
     By default, all alerts are logged to *Alerts* (and to *Messages*,
-    if the =message= style is being used).  Set to nil to disable.
+    if the `message` style is being used).  Set to nil to disable.
 
-  - `alert-hide-all-notifications` ::
+  - `alert-hide-all-notifications`  
     Want alerts off entirely?  They still get logged, however, unless
     you've turned that off too.
 
-  - `alert-user-configuration` ::
+  - `alert-user-configuration`  
     This variable lets you control exactly how and when a particular
     alert, a class of alerts, or all alerts, get reported -- or if at
     all.  Use this to make some alerts use Growl, while others are
@@ -67,7 +67,7 @@ as a normal Emacs message.  But there are many more possibilities:
 # Programmatically adding rules
 
 Users can also programmatically add configuration rules, in addition to
-customizing =alert-user-configuration=.  Here is one that the author
+customizing `alert-user-configuration`.  Here is one that the author
 currently uses with ERC, so that the fringe gets colored whenever people
 chat on BitlBee:
 
@@ -96,13 +96,15 @@ chat on BitlBee:
 There are several builtin styles, and it is trivial to create new ones.
 The builtins are:
 
-| Name    | Summary                                             |
-| ------- | --------------------------------------------------- |
-| message | Uses the Emacs `message` facility                   |
-| log     | Logs the alert text to *Alerts*, with a timestamp   |
-| ignore  | Ignores the alert entirely                          |
-| fringe  | Changes the current frame's fringe background color |
-| growl   | Uses Growl on OS X, if growlnotify is on the PATH   |
+| Name          | Summary                                                           |
+| ------------- | ------------------------------------------------------------------|
+| message       | Uses the Emacs `message` facility                                 |
+| log           | Logs the alert text to *Alerts*, with a timestamp                 |
+| ignore        | Ignores the alert entirely                                        |
+| fringe        | Changes the current frame's fringe background color               |
+| growl         | Uses Growl on OS X, if growlnotify is on the PATH                 |
+| gntp          | Uses gntp, it requires [gntp.el](https://github.com/tekai/gntp.el)|
+| notifications | Uses notifications library via D-Bus                              |
 
 # Defining new styles
 
