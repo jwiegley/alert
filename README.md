@@ -39,7 +39,7 @@ as a normal Emacs message.  But there are many more possibilities:
 
   - `alert-default-style`  
     Pick the style to use if no other config rule matches.  The
-    default is `message`, but =growl= works well too.
+    default is `message`, but `growl` works well too.
 
   - `alert-reveal-idle-time`  
     If a config rule choose to match on `idle`, this is how many
