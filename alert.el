@@ -736,33 +736,6 @@ From https://github.com/alloy/terminal-notifier."
   (unless (eq this-command 'handle-switch-frame)
     (delete-frame (plist-get info :frame) t)))
 
-(defcustom alert-toaster-default-icon
-  (concat (file-name-directory (executable-find "emacs.exe")) "../share/icons/hicolor/128x128/apps/emacs.png")
-  "Icon file using toaster."
-  :type 'string
-  :group 'alert
-  )
-
-(defcustom alert-toaster-command (executable-find "toast")
-  "Path to the toast command.
-This is found at https://github.com/nels-o/toaster."
-  :type 'file
-  :group 'alert
-  )
-
-(defun alert-toaster-notify (info)
-  (if alert-toaster-command
-      (let ((args (list
-                    "-t" (alert-encode-string (plist-get info :title))
-                    "-m" (alert-encode-string (plist-get info :message))
-                    "-p" (expand-file-name (or (plist-get info :icon) alert-toaster-default-icon))
-                   )))
-        (apply #'call-process alert-toaster-command nil nil nil args))
-    (alert-message-notify info)))
-
-(alert-define-style 'toaster :title "Notify using Toaster"
-                    :notifier #'alert-toaster-notify)
-
 ;; jww (2011-08-25): Not quite working yet
 ;;(alert-define-style 'frame :title "Popup buffer in a frame"
 ;;                    :notifier #'alert-frame-notify
