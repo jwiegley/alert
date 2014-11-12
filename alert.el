@@ -737,7 +737,10 @@ From https://github.com/alloy/terminal-notifier."
     (delete-frame (plist-get info :frame) t)))
 
 (defcustom alert-toaster-default-icon
-  (concat (file-name-directory (executable-find "emacs.exe")) "../share/icons/hicolor/128x128/apps/emacs.png")
+  (let ((exec-bin (executable-find "emacs.exe")))
+    (cond (exec-bin
+           (concat (file-name-directory exec-bin) "../share/icons/hicolor/128x128/apps/emacs.png"))
+          (t nil)))
   "Icon file using toaster."
   :type 'string
   :group 'alert
