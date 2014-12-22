@@ -96,15 +96,18 @@ chat on BitlBee:
 There are several builtin styles, and it is trivial to create new ones.
 The builtins are:
 
-| Name          | Summary                                                           |
-| ------------- | ------------------------------------------------------------------|
-| message       | Uses the Emacs `message` facility                                 |
-| log           | Logs the alert text to *Alerts*, with a timestamp                 |
-| ignore        | Ignores the alert entirely                                        |
-| fringe        | Changes the current frame's fringe background color               |
-| growl         | Uses Growl on OS X, if growlnotify is on the PATH                 |
-| gntp          | Uses gntp, it requires [gntp.el](https://github.com/tekai/gntp.el)|
-| notifications | Uses notifications library via D-Bus                              |
+| Name          | Summary                                                            |
+| ------------- | ------------------------------------------------------------------ |
+| fringe        | Changes the current frame's fringe background color                |
+| gntp          | Uses gntp, it requires [gntp.el](https://github.com/tekai/gntp.el) |
+| growl         | Uses Growl on OS X, if growlnotify is on the PATH                  |
+| ignore        | Ignores the alert entirely                                         |
+| libnotify     | Uses libnotify if notify-send is on the PATH                       |
+| log           | Logs the alert text to *Alerts*, with a timestamp                  |
+| message       | Uses the Emacs `message` facility                                  |
+| notifications | Uses notifications library via D-Bus                               |
+| notifier      | Uses terminal-notifier on OS X, if it is on the PATH               |
+| toaster       | Use the toast notification system                                  |
 
 # Defining new styles
 
