@@ -618,9 +618,12 @@ strings."
       (let* ((args
               (list "--icon"     (or (plist-get info :icon) "Emacs")
                     "--app-name" "Emacs"
-                    "--urgency"  (symbol-name
-                                  (cdr (assq (plist-get info :severity)
-                                             alert-libnotify-priorities)))))
+                    "--urgency"  (let ((urgency (cdr (assq
+                                                      (plist-get info :severity)
+                                                      alert-libnotify-priorities))))
+                                   (if urgency
+                                       (symbol-name urgency)
+                                     "normal"))))
              (category (plist-get info :category)))
         (if (and (plist-get info :persistent)
                  (not (plist-get info :never-persist)))
@@ -639,7 +642,8 @@ strings."
         (nconc args (list
                      (alert-encode-string (plist-get info :title))
                      (alert-encode-string (plist-get info :message))))
-        (apply #'call-process alert-libnotify-command nil nil nil args))
+        (apply #'call-process alert-libnotify-command nil
+               (list (get-buffer-create " *libnotify output*") t) nil args))
     (alert-message-notify info)))
 
 (alert-define-style 'libnotify :title "Notify using libnotify"
