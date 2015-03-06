@@ -618,6 +618,7 @@ strings."
       (let* ((args
               (list "--icon"     (or (plist-get info :icon) "Emacs")
                     "--app-name" "Emacs"
+                    "--hint" "int:transient:1"
                     "--urgency"  (let ((urgency (cdr (assq
                                                       (plist-get info :severity)
                                                       alert-libnotify-priorities))))
