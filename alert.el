@@ -6,7 +6,7 @@
 ;; Created: 24 Aug 2011
 ;; Updated: 17 Feb 2013
 ;; Version: 1.1
-;; Package-Requires: ((gntp "0.1"))
+;; Package-Requires: ((gntp "0.1") (log4e "0.3.0"))
 ;; Keywords: notification emacs message
 ;; X-URL: https://github.com/jwiegley/alert
 
@@ -178,6 +178,7 @@
   (require 'cl))
 (require 'gntp nil t)
 (require 'notifications nil t)
+(require 'log4e nil t)
 
 (defgroup alert nil
   "Notification system for Emacs similar to Growl"
@@ -204,6 +205,23 @@
   "Colors associated by default with alert severities.
 This is used by styles external to Emacs that don't understand faces."
   :type '(alist :key-type symbol :value-type color)
+  :group 'alert)
+
+(defcustom alert-log-severity-functions
+  '((urgent   . alert--log-fatal)
+    (high     . alert--log-error)
+    (moderate . alert--log-warn)
+    (normal   . alert--log-info)
+    (low      . alert--log-debug)
+    (trivial  . alert--log-trace))
+  "Log4e logging functions"
+  :type '(alist :key-type symbol :value-type color)
+  :group 'alert)
+
+(defcustom alert-log-level
+  'normal
+  "Minimum level of messages to log"
+  :type 'symbol
   :group 'alert)
 
 (defcustom alert-reveal-idle-time 15
@@ -500,7 +518,23 @@ fringe gets colored whenever people chat on BitlBee:
 (defun alert-log-notify (info)
   (let* ((mes (plist-get info :message))
          (sev (plist-get info :severity))
-         (len (length mes)))
+         (len (length mes))
+         (func (cdr (assoc sev alert-severity-functions))))
+
+    ; when we get here you better be using log4e or have your logging
+    ; functions defined
+    (when (not (functionp func))
+      (log4e:deflogger "alert" "%t [%l] %m" "%H:%M:%S")
+      (when (functionp 'alert--log-set-level)
+        (alert--log-set-level alert-log-level)))
+
+    (when (not (functionp func))
+      (alert-legacy-log-notify mas sev len))
+;      (error "Log4e isn't being used and the logging functions aren't defined!"))
+
+    (apply func (list mes))))
+
+(defun alert-legacy-log-notify (mes sev len)
   (with-current-buffer
       (get-buffer-create "*Alerts*")
     (goto-char (point-max))
@@ -512,12 +546,15 @@ fringe gets colored whenever people chat on BitlBee:
     (insert ?\n))))
 
 (defun alert-log-clear (info)
-  (with-current-buffer
-      (get-buffer-create "*Alerts*")
-    (goto-char (point-max))
-    (insert (format-time-string "%H:%M %p - ")
-            "Clear: " (plist-get info :message)
-            ?\n)))
+  (if (functionp 'alert--log-clear-log)
+      (alert--log-clear-log)
+    (if (bufferp "*Alerts*")
+        (with-current-buffer
+            (get-buffer-create "*Alerts*")
+          (goto-char (point-max))
+          (insert (format-time-string "%H:%M %p - ")
+                  "Clear: " (plist-get info :message)
+                  ?\n)))))
 
 (alert-define-style 'log :title "Log to *Alerts* buffer"
                     :notifier #'alert-log-notify
