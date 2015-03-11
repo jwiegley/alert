@@ -251,6 +251,13 @@ The amount of idle time is governed by `alert-persist-idle-time'."
   :type 'boolean
   :group 'alert)
 
+(defcustom alert-default-icon
+  (concat data-directory
+          "images/icons/hicolor/scalable/apps/emacs.svg")
+  "Filename of default icon to show for libnotify-alerts."
+  :type 'string
+  :group 'alert)
+
 (defvar alert-styles nil)
 
 (defun alert-styles-radio-type (widget-name)
@@ -653,7 +660,8 @@ passed as a single symbol, a string or a list of symbols or
 strings."
   (if alert-libnotify-command
       (let* ((args
-              (list "--icon"     (or (plist-get info :icon) "Emacs")
+              (list "--icon"     (or (plist-get info :icon)
+                                     alert-default-icon)
                     "--app-name" "Emacs"
                     "--hint" "int:transient:1"
                     "--urgency"  (let ((urgency (cdr (assq
