@@ -519,7 +519,7 @@ fringe gets colored whenever people chat on BitlBee:
   (let* ((mes (plist-get info :message))
          (sev (plist-get info :severity))
          (len (length mes))
-         (func (cdr (assoc sev alert-severity-functions))))
+         (func (cdr (assoc sev alert-log-severity-functions))))
 
     ; when we get here you better be using log4e or have your logging
     ; functions defined
@@ -529,7 +529,7 @@ fringe gets colored whenever people chat on BitlBee:
         (alert--log-set-level alert-log-level)))
 
     (when (not (functionp func))
-      (alert-legacy-log-notify mas sev len))
+      (alert-legacy-log-notify mes sev len))
 ;      (error "Log4e isn't being used and the logging functions aren't defined!"))
 
     (apply func (list mes))))
@@ -543,7 +543,7 @@ fringe gets colored whenever people chat on BitlBee:
     (set-text-properties (- (point) len) (point)
                        (list 'face (cdr (assq sev
                                               alert-severity-faces))))
-    (insert ?\n))))
+    (insert ?\n)))
 
 (defun alert-log-clear (info)
   (if (functionp 'alert--log-clear-log)
