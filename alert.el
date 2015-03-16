@@ -520,26 +520,22 @@ fringe gets colored whenever people chat on BitlBee:
     rule))
 
 (alert-define-style 'ignore :title "Don't display alerts")
-
 
 (defun alert-log-notify (info)
   (let* ((mes (plist-get info :message))
          (sev (plist-get info :severity))
          (len (length mes))
          (func (cdr (assoc sev alert-log-severity-functions))))
-
-    ; when we get here you better be using log4e or have your logging
-    ; functions defined
-    (when (not (functionp func))
-      (log4e:deflogger "alert" "%t [%l] %m" "%H:%M:%S")
-      (when (functionp 'alert--log-set-level)
-        (alert--log-set-level alert-log-level)))
-
-    (when (not (functionp func))
-      (alert-legacy-log-notify mes sev len))
-;      (error "Log4e isn't being used and the logging functions aren't defined!"))
-
-    (apply func (list mes))))
+    (if (not (featurep 'log4e))
+        (alert-legacy-log-notify mes sev len)
+      ;; when we get here you better be using log4e or have your logging
+      ;; functions defined
+      (if (fboundp func)
+          (apply func (list mes))
+        (when (fboundp 'log4e:deflogger)
+          (log4e:deflogger "alert" "%t [%l] %m" "%H:%M:%S")
+          (when (functionp 'alert--log-set-level)
+            (alert--log-set-level alert-log-level)))))))
 
 (defun alert-legacy-log-notify (mes sev len)
   (with-current-buffer
@@ -569,7 +565,7 @@ fringe gets colored whenever people chat on BitlBee:
                     )
 
 (defun alert-message-notify (info)
-  (message  (plist-get info :message))
+  (message (plist-get info :message))
   ;;(if (memq (plist-get info :severity) '(high urgency))
   ;;    (ding))
   )
