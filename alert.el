@@ -4,8 +4,8 @@
 
 ;; Author: John Wiegley <jwiegley@gmail.com>
 ;; Created: 24 Aug 2011
-;; Updated: 17 Feb 2013
-;; Version: 1.1
+;; Updated: 16 Mar 2015
+;; Version: 1.2
 ;; Package-Requires: ((gntp "0.1") (log4e "0.3.0"))
 ;; Keywords: notification emacs message
 ;; X-URL: https://github.com/jwiegley/alert
