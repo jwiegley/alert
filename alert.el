@@ -860,6 +860,22 @@ This is found at https://github.com/nels-o/toaster."
     (dolist (alert to-delete)
       (setq alert-active-alerts (delq alert alert-active-alerts)))))
 
+(defun alert-send-notification
+    (alert-buffer info style-def &optional persist never-per)
+  (let ((notifier (plist-get style-def :notifier)))
+    (if notifier
+        (funcall notifier info)))
+  (let ((remover (plist-get style-def :remover)))
+    (add-to-list 'alert-active-alerts
+                 (list alert-buffer info remover))
+    (with-current-buffer alert-buffer
+      (add-hook 'post-command-hook
+                #'alert-remove-on-command nil t))
+    (if (and remover (or (not persist) never-per))
+        (run-with-timer alert-fade-time nil
+                        #'alert-remove-when-active
+                        remover info))))
+
 ;;;###autoload
 (defun* alert (message &key (severity 'normal) title icon category
                        buffer mode data style persistent never-persist)
@@ -986,35 +1002,18 @@ Here are some more typical examples of usage:
                                 (string-match (cdr condition) icon))))
                          (nth 0 config)))))
 
-                (let ((notifier (plist-get style-def :notifier)))
-                  (if notifier
-                      (funcall notifier info)))
+                (alert-send-notification alert-buffer info style-def
+                                         persist never-per)
                 (setq matched t)
+                (if (or style (not (if (functionp continue)
+                                       (funcall continue info)
+                                     continue)))
+                    (throw 'finish t)))))))
 
-                (let ((remover (plist-get style-def :remover)))
-                  (add-to-list 'alert-active-alerts
-                               (list alert-buffer info remover))
-                  (with-current-buffer alert-buffer
-                    (add-hook 'post-command-hook
-                              'alert-remove-on-command nil t))
-                  (if (and remover (or (not persist) never-per))
-                      (run-with-timer alert-fade-time nil
-                                      #'alert-remove-when-active
-                                      remover info))
-                  (if (or style
-                          (not (if (functionp continue)
-                                   (funcall continue info)
-                                 continue)))
-                      (throw 'finish t))))))))
-
-      (if (and alert-default-style
-               (not matched))
-          (let ((notifier
-                 (plist-get (cdr (assq alert-default-style
-                                       alert-styles))
-                            :notifier)))
-            (if notifier
-                (funcall notifier base-info)))))))
+      (if (and (not matched) alert-default-style)
+          (alert-send-notification alert-buffer base-info
+                                   (cdr (assq alert-default-style
+                                              alert-styles)))))))
 
 (provide 'alert)
 
