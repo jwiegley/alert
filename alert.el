@@ -862,11 +862,9 @@ This is found at https://github.com/nels-o/toaster."
     (if notifier
         (funcall notifier info)))
   (let ((remover (plist-get style-def :remover)))
-    (add-to-list 'alert-active-alerts
-                 (list alert-buffer info remover))
+    (add-to-list 'alert-active-alerts (list alert-buffer info remover))
     (with-current-buffer alert-buffer
-      (add-hook 'post-command-hook
-                #'alert-remove-on-command nil t))
+      (add-hook 'post-command-hook #'alert-remove-on-command nil t))
     (if (and remover (or (not persist) never-per))
         (run-with-timer alert-fade-time nil
                         #'alert-remove-when-active
