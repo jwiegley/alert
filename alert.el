@@ -675,7 +675,7 @@ strings."
                  (list "--category"
                        (cond ((symbolp category)
                               (symbol-name category))
-                             ((stringp category))
+                             ((stringp category) category)
                              ((listp category)
                               (mapconcat (if (symbolp (car category))
                                              #'symbol-name
