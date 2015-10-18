@@ -122,6 +122,7 @@
 ;; The builtins are:
 ;;
 ;;   fringe        - Changes the current frame's fringe background color
+;;   mode-line     - Changes the current frame's mode-line background color
 ;;   gntp          - Uses gntp, it requires gntp.el (see https://github.com/tekai/gntp.el)
 ;;   growl         - Uses Growl on OS X, if growlnotify is on the PATH
 ;;   ignore        - Ignores the alert entirely
@@ -590,6 +591,22 @@ fringe gets colored whenever people chat on BitlBee:
                     :notifier #'alert-fringe-notify
                     :remover #'alert-fringe-restore)
 
+
+(defun alert-mode-line-notify (info)
+  (copy-face 'mode-line 'alert-saved-mode-line-face)
+  (set-face-background 'mode-line (cdr (assq (plist-get info :severity)
+                                             alert-severity-colors)))
+  (set-face-foreground 'mode-line "white"))
+
+(defun alert-mode-line-restore (info)
+  (copy-face 'alert-saved-mode-line-face 'mode-line))
+
+(alert-define-style 'mode-line :title "Change the mode-line color"
+                    :notifier #'alert-mode-line-notify
+                    :remover #'alert-mode-line-restore)
+
+
+
 (defcustom alert-growl-command (executable-find "growlnotify")
   "Path to the growlnotify command.
 This is found in the Growl Extras: http://growl.info/extras.php."

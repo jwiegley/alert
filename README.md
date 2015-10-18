@@ -99,6 +99,7 @@ The builtins are:
 | Name          | Summary                                                            |
 | ------------- | ------------------------------------------------------------------ |
 | fringe        | Changes the current frame's fringe background color                |
+| mode-line     | Changes the current frame's mode-line background color             |
 | gntp          | Uses gntp, it requires [gntp.el](https://github.com/tekai/gntp.el) |
 | growl         | Uses Growl on OS X, if growlnotify is on the PATH                  |
 | ignore        | Ignores the alert entirely                                         |
