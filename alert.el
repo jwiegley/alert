@@ -454,22 +454,22 @@ things the Lisp way.
 Here is a rule the author currently uses with ERC, so that the
 fringe gets colored whenever people chat on BitlBee:
 
-\(alert-add-rule :status   '(buried visible idle)
-                :severity '(moderate high urgent)
-                :mode     'erc-mode
+\(alert-add-rule :status   \\='(buried visible idle)
+                :severity \\='(moderate high urgent)
+                :mode     \\='erc-mode
                 :predicate
-                #'(lambda (info)
-                    (string-match (concat \"\\\\`[^&].*@BitlBee\\\\'\")
+                #\\='(lambda (info)
+                    (string-match (concat \"\\\\`[^&].*@BitlBee\\\\\\='\")
                                   (erc-format-target-and/or-network)))
                 :persistent
-                #'(lambda (info)
+                #\\='(lambda (info)
                     ;; If the buffer is buried, or the user has been
                     ;; idle for `alert-reveal-idle-time' seconds,
                     ;; make this alert persistent.  Normally, alerts
                     ;; become persistent after
                     ;; `alert-persist-idle-time' seconds.
-                    (memq (plist-get info :status) '(buried idle)))
-                :style 'fringe
+                    (memq (plist-get info :status) \\='(buried idle)))
+                :style \\='fringe
                 :continue t)"
   (let ((rule (list (list t) style (list t))))
     (if severity
@@ -895,16 +895,16 @@ MESSAGE is what the user will see.  You may also use keyword
 arguments to specify additional details.  Here is a full example:
 
 \(alert \"This is a message\"
-       :severity 'high          ;; The default severity is `normal'
-       :title \"Title\"         ;; An optional title
-       :category 'example       ;; A symbol to identify the message
-       :mode 'text-mode         ;; Normally determined automatically
+       :severity \\='high          ;; The default severity is `normal'
+       :title \"Title\"           ;; An optional title
+       :category \\='example       ;; A symbol to identify the message
+       :mode \\='text-mode         ;; Normally determined automatically
        :buffer (current-buffer) ;; This is the default
        :data nil                ;; Unused by alert.el itself
        :persistent nil          ;; Force the alert to be persistent;
                                 ;; it is best not to use this
        :never-persist nil       ;; Force this alert to never persist
-       :style 'fringe)          ;; Force a given style to be used;
+       :style \\='fringe)          ;; Force a given style to be used;
                                 ;; this is only for debugging!
 
 If no :title is given, the buffer-name of :buffer is used.  If
@@ -919,10 +919,10 @@ Here are some more typical examples of usage:
   (alert \"This is an alert\")
 
   ;; You can adjust the severity for more important messages
-  (alert \"This is an alert\" :severity 'high)
+  (alert \"This is an alert\" :severity \\='high)
 
   ;; Or decrease it for purely informative ones
-  (alert \"This is an alert\" :severity 'trivial)
+  (alert \"This is an alert\" :severity \\='trivial)
 
   ;; Alerts can have optional titles.  Otherwise, the title is the
   ;; buffer-name of the (current-buffer) where the alert originated.
@@ -931,7 +931,7 @@ Here are some more typical examples of usage:
   ;; Further, alerts can have categories.  This allows users to
   ;; selectively filter on them.
   (alert \"This is an alert\" :title \"My Alert\"
-         :category 'some-category-or-other)"
+         :category \\='some-category-or-other)"
   (destructuring-bind
       (alert-buffer current-major-mode current-buffer-status
                     current-buffer-name)
