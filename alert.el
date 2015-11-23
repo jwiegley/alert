@@ -686,7 +686,8 @@ strings."
              (category (plist-get info :category)))
         (if (and (plist-get info :persistent)
                  (not (plist-get info :never-persist)))
-            (nconc args (list "--expire-time=0")))
+            (nconc args (list "--expire-time=0"))
+	  (nconc args (list (concatenate 'string "--expire-time=" (number-to-string (* 1000 alert-fade-time))))))
         (when category
           (nconc args
                  (list "--category"
