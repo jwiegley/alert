@@ -607,10 +607,7 @@ fringe gets colored whenever people chat on BitlBee:
 
 
 
-(defcustom alert-growl-command (executable-find
-                                (case system-type
-                                  ('windows-nt "growlnotify.exe")
-                                  (t "growlnotify")))
+(defcustom alert-growl-command (executable-find "growlnotify")
   "Path to the growlnotify command.
 This is found in the Growl Extras: http://growl.info/extras.php."
   :type 'file
