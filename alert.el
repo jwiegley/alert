@@ -131,6 +131,7 @@
 ;;   message       - Uses the Emacs `message' facility
 ;;   notifications - Uses notifications library via D-Bus
 ;;   notifier      - Uses terminal-notifier on OS X, if it is on the PATH
+;;   osx-notifier  - Native OSX notifier using AppleScript
 ;;   toaster       - Use the toast notification system
 ;;
 ;; * Defining new styles
