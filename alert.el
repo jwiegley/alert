@@ -776,7 +776,17 @@ From https://github.com/alloy/terminal-notifier."
 
 (alert-define-style 'notifier :title "Notify using terminal-notifier"
                     :notifier #'alert-notifier-notify)
-
+
+(defun alert-osx-notifier-notify (info)
+  (let ((args
+	 (list "with title" (alert-encode-string (plist-get info :title))
+	       "with subtitle" (alert-encode-string (plist-get info :subtitle))
+	       "with sound" (alert-encode-string (plist-get info :sound)))))
+    (apply #'call-process "osascript -e 'display notifcation ....'"))
+  (alert-message-notify info))
+
+(alert-define-style 'osx-notifier :title "Notify using native OSX notification" :notifier #'alert-osx-notifier-notify)
+
 (defun alert-frame-notify (info)
   (let ((buf (plist-get info :buffer)))
     (if (eq (alert-buffer-status buf) 'buried)
