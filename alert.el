@@ -176,6 +176,8 @@
 ;;                        ;; the notifier function.
 ;;                        ))
 
+;;; Code:
+
 (eval-when-compile
   (require 'cl))
 (require 'gntp nil t)
