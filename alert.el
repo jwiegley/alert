@@ -780,7 +780,7 @@ From https://github.com/alloy/terminal-notifier."
                     :notifier #'alert-notifier-notify)
 
 (defun alert-osx-notifier-notify (info)
-  (apply #'call-process (format "osascript -e 'display notifcation %S with title %S'"
+  (apply #'call-process (format "osascript -e 'display notification %S with title %S'"
 				(alert-encode-string (plist-get info :message))
 				(alert-encode-string (plist-get info :title))))
   (alert-message-notify info))
