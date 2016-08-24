@@ -569,7 +569,9 @@ fringe gets colored whenever people chat on BitlBee:
                     )
 
 (defun alert-message-notify (info)
-  (message (plist-get info :message))
+  ;; the message text might contain `%' and we don't want them to be
+  ;; interpreted as format specifiers:
+  (message "%s" (plist-get info :message))
   ;;(if (memq (plist-get info :severity) '(high urgency))
   ;;    (ding))
   )
