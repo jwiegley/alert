@@ -121,6 +121,7 @@ The builtins are:
 | osx-notifier  | Native OSX notification using AppleScript                          |
 | toaster       | Use the toast notification system                                  |
 | x11           | Changes the urgency property of the window in the X Window System
+| termux        | Use `termux-notification` from the Termux API                     |
 
 # Defining new styles
 
