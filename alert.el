@@ -773,7 +773,6 @@ From https://github.com/alloy/terminal-notifier."
   (if alert-notifier-command
       (let ((args
              (list "-title"   (alert-encode-string (plist-get info :title))
-                   "-sender"  "org.gnu.Emacs"
                    "-message" (alert-encode-string (plist-get info :message)))))
         (apply #'call-process alert-notifier-command nil nil nil args))
     (alert-message-notify info)))
