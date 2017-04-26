@@ -769,11 +769,19 @@ From https://github.com/alloy/terminal-notifier."
   :type 'file
   :group 'alert)
 
+(defcustom alert-notifier-default-icon
+  (concat data-directory
+          "images/icons/hicolor/128x128/apps/emacs.png")
+  "Filename of default icon to show for terminal-notifier alerts."
+  :type 'string
+  :group 'alert)
+
 (defun alert-notifier-notify (info)
   (if alert-notifier-command
       (let ((args
-             (list "-title"   (alert-encode-string (plist-get info :title))
-                   "-message" (alert-encode-string (plist-get info :message)))))
+             (list "-title"    (alert-encode-string (plist-get info :title))
+                   "--appIcon" (or (plist-get info :icon) alert-notifier-default-icon)
+                   "-message"  (alert-encode-string (plist-get info :message)))))
         (apply #'call-process alert-notifier-command nil nil nil args))
     (alert-message-notify info)))
 
