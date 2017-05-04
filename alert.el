@@ -765,7 +765,7 @@ strings."
 
 (defcustom alert-notifier-command (executable-find "terminal-notifier")
   "Path to the terminal-notifier command.
-From https://github.com/alloy/terminal-notifier."
+From https://github.com/julienXX/terminal-notifier."
   :type 'file
   :group 'alert)
 
