@@ -134,6 +134,7 @@
 ;;   notifier      - Uses terminal-notifier on OS X, if it is on the PATH
 ;;   osx-notifier  - Native OSX notifier using AppleScript
 ;;   toaster       - Use the toast notification system
+;;   termux        - Use termux-notification from the Termux API
 ;;
 ;; * Defining new styles
 ;;
@@ -686,6 +687,13 @@ systems."
   :type 'file
   :group 'alert)
 
+(defcustom alert-termux-command (executable-find "termux-notification")
+  "Path to the termux-notification command.
+This is found in the termux-api package, and it requires the Termux
+API addon app to be installed."
+  :type 'file
+  :group 'alert)
+
 (defcustom alert-libnotify-priorities
   '((urgent   . critical)
     (high     . critical)
@@ -878,6 +886,23 @@ This is found at https://github.com/nels-o/toaster."
 
 (alert-define-style 'toaster :title "Notify using Toaster"
                     :notifier #'alert-toaster-notify)
+
+(defun alert-termux-notify (info)
+  "Send INFO using termux-notification.
+Handles :TITLE and :MESSAGE keywords from the
+INFO plist."
+  (if alert-termux-command
+      (let ((args (nconc
+                   (when (plist-get info :title)
+                     (list "-t" (alert-encode-string (plist-get info :title))))
+                   (list "-c" (alert-encode-string (plist-get info :message))))))
+        (apply #'call-process alert-termux-command nil
+               (list (get-buffer-create " *termux-notification output*") t)
+               nil args))
+    (alert-message-notify info)))
+
+(alert-define-style 'termux :title "Notify using termux"
+                    :notifier #'alert-termux-notify)
 
 ;; jww (2011-08-25): Not quite working yet
 ;;(alert-define-style 'frame :title "Popup buffer in a frame"
