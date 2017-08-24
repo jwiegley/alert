@@ -129,6 +129,7 @@
 ;;   libnotify     - Uses libnotify if notify-send is on the PATH
 ;;   log           - Logs the alert text to *Alerts*, with a timestamp
 ;;   message       - Uses the Emacs `message' facility
+;;   momentary     - Uses the Emacs `momentary-string-display' facility
 ;;   notifications - Uses notifications library via D-Bus
 ;;   notifier      - Uses terminal-notifier on OS X, if it is on the PATH
 ;;   osx-notifier  - Native OSX notifier using AppleScript
@@ -175,6 +176,13 @@
 ;;                        ;; It is the same property list that was passed to
 ;;                        ;; the notifier function.
 ;;                        ))
+;;
+;; You can test a specific style with something like this:
+;;
+;; (let ((alert-user-configuration '((((:severity high)) momentary nil))))
+;;   (alert "Same buffer momentary alert" :title "My Alert" :severity 'high)
+;;   (alert "This is a momentary alert in another visible buffer" :title "My Alert"
+;;          :severity 'high :buffer (other-buffer (current-buffer) t)))
 
 ;;; Code:
 
@@ -582,6 +590,25 @@ fringe gets colored whenever people chat on BitlBee:
 (alert-define-style 'message :title "Display message in minibuffer"
                     :notifier #'alert-message-notify
                     :remover #'alert-message-remove)
+
+(defun alert-momentary-notify (info)
+  (save-excursion
+    (with-current-buffer (or (plist-get info :buffer) (current-buffer))
+      (momentary-string-display
+       (format "%s: %s (%s/%s/%s)"
+               (or (plist-get info :title) "untitled")
+               (or (plist-get info :message) "no message")
+               (or (plist-get info :severity) "no priority")
+               (or (plist-get info :category) "no category")
+               (or (plist-get info :mode) "no mode"))
+       (progn
+         (beginning-of-line)
+         (point))))))
+
+(alert-define-style 'momentary :title "Display message momentarily in buffer"
+                    :notifier #'alert-momentary-notify
+                    ;; explicitly, we don't need a remover
+                    :remover #'ignore)
 
 (copy-face 'fringe 'alert-saved-fringe-face)
 
