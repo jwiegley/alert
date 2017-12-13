@@ -780,11 +780,11 @@ strings."
 (when (featurep 'notifications)
 (defun alert-notifications-notify (info)
   (notifications-notify :title (plist-get info :title)
-                      :body  (plist-get info :message)
-                      :app-icon (plist-get info :icon)
-                      :urgency (cdr (assq (plist-get info :severity)
-                                            alert-notifications-priorities))
-)
+                        :body  (plist-get info :message)
+                        :app-icon (plist-get info :icon)
+                        :timeout (if (plist-get info :persistent) 0 -1)
+                        :urgency (cdr (assq (plist-get info :severity)
+                                            alert-notifications-priorities)))
                (alert-message-notify info))
 
 (alert-define-style 'notifications :title "Notify using notifications"
