@@ -786,7 +786,6 @@ by the `notifications' style.")
 
 (when (featurep 'notifications)
 (defun alert-notifications-notify (info)
-  (message "notify %S" info)
   "Show the alert defined by INFO with `notifications-notify'."
   (let ((id (notifications-notify :title (plist-get info :title)
                                   :body  (plist-get info :message)
