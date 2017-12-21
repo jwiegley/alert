@@ -777,15 +777,26 @@ strings."
   :type '(alist :key-type symbol :value-type integer)
   :group 'alert)
 
+(defvar alert-notifications-ids (make-hash-table :test #'equal)
+  "Internal store of notification ids returned by the `notifications' backend.
+Used for replacing notifications with the same id.  The key is
+the value of the :id keyword to `alert'.  An id is only stored
+here if there `alert' was called ith an :id keyword and handled
+by the `notifications' style.")
+
 (when (featurep 'notifications)
 (defun alert-notifications-notify (info)
-  (notifications-notify :title (plist-get info :title)
-                        :body  (plist-get info :message)
-                        :app-icon (plist-get info :icon)
-                        :timeout (if (plist-get info :persistent) 0 -1)
-                        :urgency (cdr (assq (plist-get info :severity)
-                                            alert-notifications-priorities)))
-               (alert-message-notify info))
+  "Show the alert defined by INFO with `notifications-notify'."
+  (let ((id (notifications-notify :title (plist-get info :title)
+                                  :body  (plist-get info :message)
+                                  :app-icon (plist-get info :icon)
+                                  :timeout (if (plist-get info :persistent) 0 -1)
+                                  :replaces-id (gethash (plist-get info :id) alert-notifications-ids)
+                                  :urgency (cdr (assq (plist-get info :severity)
+                                                      alert-notifications-priorities)))))
+    (when (plist-get info :id)
+      (puthash (plist-get info :id) id alert-notifications-ids)))
+  (alert-message-notify info))
 
 (alert-define-style 'notifications :title "Notify using notifications"
                     :notifier #'alert-notifications-notify))
@@ -974,7 +985,8 @@ This is found at https://github.com/nels-o/toaster."
 
 ;;;###autoload
 (defun* alert (message &key (severity 'normal) title icon category
-                       buffer mode data style persistent never-persist)
+                       buffer mode data style persistent never-persist
+                       id)
   "Alert the user that something has happened.
 MESSAGE is what the user will see.  You may also use keyword
 arguments to specify additional details.  Here is a full example:
@@ -989,6 +1001,8 @@ arguments to specify additional details.  Here is a full example:
        :persistent nil          ;; Force the alert to be persistent;
                                 ;; it is best not to use this
        :never-persist nil       ;; Force this alert to never persist
+       :id \\='my-id)              ;; Used to replace previous message of
+                                ;; the same id in styles that support it
        :style \\='fringe)          ;; Force a given style to be used;
                                 ;; this is only for debugging!
 
@@ -1033,6 +1047,7 @@ Here are some more typical examples of usage:
                            :category category
                            :buffer alert-buffer
                            :mode current-major-mode
+                           :id id
                            :data data))
           matched)
 

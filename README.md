@@ -25,6 +25,14 @@ Just use `alert` instead of `message` as follows:
 ;; Further, alerts can have categories.  This allows users to
 ;; selectively filter on them.
 (alert "This is an alert" :title "My Alert" :category 'debug)
+
+;; If a backend allows replacing alerts, you may pass an id
+;; to your alert; then the next one with the same id will replace the
+;; first one:
+(alert "You have 30 unread mails" :title "Mail!" :id 'new-mail-alert)
+(alert "You have 49 unread mails" :title "Mail!" :id 'new-mail-alert)
+;; This avoids piling up lots of alerts, when only the last one is
+;; relevant.
 ```
 
 # For users
