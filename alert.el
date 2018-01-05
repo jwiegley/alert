@@ -798,6 +798,14 @@ by the `notifications' style.")
       (puthash (plist-get info :id) id alert-notifications-ids)))
   (alert-message-notify info))
 
+(defun alert-notifications-remove (info)
+  "Remove the `notifications-notify' message based on INFO :id."
+  (let ((id (and (plist-get info :id)
+                 (gethash (plist-get info :id) alert-notifications-ids))))
+    (when id
+      (notifications-close-notification id)
+      (remhash (plist-get info :id) alert-notifications-ids))))
+
 (alert-define-style 'notifications :title "Notify using notifications"
                     :notifier #'alert-notifications-notify))
 
