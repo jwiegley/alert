@@ -687,6 +687,13 @@ systems."
   :type 'file
   :group 'alert)
 
+(defcustom alert-libnotify-additional-args
+  nil
+  "Additional args to pass to notify-send.
+Must be a list of strings."
+  :type '(repeat string)
+  :group 'alert)
+
 (defcustom alert-libnotify-priorities
   '((urgent   . critical)
     (high     . critical)
@@ -706,16 +713,17 @@ passed as a single symbol, a string or a list of symbols or
 strings."
   (if alert-libnotify-command
       (let* ((args
-              (list "--icon"     (or (plist-get info :icon)
-                                     alert-default-icon)
-                    "--app-name" "Emacs"
-                    "--hint" "int:transient:1"
-                    "--urgency"  (let ((urgency (cdr (assq
-                                                      (plist-get info :severity)
-                                                      alert-libnotify-priorities))))
-                                   (if urgency
-                                       (symbol-name urgency)
-                                     "normal"))))
+              (append
+               (list "--icon"     (or (plist-get info :icon)
+                                      alert-default-icon)
+                     "--app-name" "Emacs"
+                     "--urgency"  (let ((urgency (cdr (assq
+                                                       (plist-get info :severity)
+                                                       alert-libnotify-priorities))))
+                                    (if urgency
+                                        (symbol-name urgency)
+                                      "normal")))
+               alert-libnotify-additional-args))
              (category (plist-get info :category)))
         (if (and (plist-get info :persistent)
                  (not (plist-get info :never-persist)))
