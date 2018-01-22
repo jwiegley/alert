@@ -190,8 +190,16 @@
 (eval-when-compile
   (require 'cl))
 (require 'gntp nil t)
+(eval-when-compile
+  ;; if not available, silence the byte compiler
+  (defvar gntp-server))
+(declare-function gntp-notify "gntp")
 (require 'notifications nil t)
 (require 'log4e nil t)
+
+;; shut up the byte compiler
+(declare-function alert-gntp-notify "alert")
+(declare-function alert-notifications-notify "alert")
 
 (defgroup alert nil
   "Notification system for Emacs similar to Growl"
