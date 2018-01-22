@@ -190,8 +190,9 @@
 (eval-when-compile
   (require 'cl))
 (require 'gntp nil t)
-;; if not available, silence the byte compiler
-(defvar gntp-server)
+(eval-when-compile
+  ;; if not available, silence the byte compiler
+  (defvar gntp-server))
 (declare-function gntp-notify "gntp")
 (require 'notifications nil t)
 (require 'log4e nil t)
