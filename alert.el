@@ -1,4 +1,4 @@
-;;; alert.el --- Growl-style notification system for Emacs
+;;; alert.el --- Growl-style notification system for Emacs  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2011-2013 John Wiegley
 
@@ -187,8 +187,7 @@
 
 ;;; Code:
 
-(eval-when-compile
-  (require 'cl))
+(require 'cl-lib)
 (require 'gntp nil t)
 (eval-when-compile
   ;; if not available, silence the byte compiler
@@ -235,13 +234,13 @@ This is used by styles external to Emacs that don't understand faces."
     (normal   . alert--log-info)
     (low      . alert--log-debug)
     (trivial  . alert--log-trace))
-  "Log4e logging functions"
+  "Log4e logging functions."
   :type '(alist :key-type symbol :value-type color)
   :group 'alert)
 
 (defcustom alert-log-level
   'normal
-  "Minimum level of messages to log"
+  "Minimum level of messages to log."
   :type 'symbol
   :group 'alert)
 
@@ -462,9 +461,9 @@ definition:
                     :remover #'ignore)
 
 ;;;###autoload
-(defun* alert-add-rule (&key severity status mode category title
-                             message predicate icon (style alert-default-style)
-                             persistent continue never-persist append)
+(cl-defun alert-add-rule (&key severity status mode category title
+                               message predicate icon (style alert-default-style)
+                               persistent continue never-persist append)
   "Programmatically add an alert configuration rule.
 
 Normally, users should custoimze `alert-user-configuration'.
@@ -567,8 +566,8 @@ fringe gets colored whenever people chat on BitlBee:
     (insert (format-time-string "%H:%M %p - "))
     (insert mes)
     (set-text-properties (- (point) len) (point)
-                       (list 'face (cdr (assq sev
-                                              alert-severity-faces))))
+                         (list 'face (cdr (assq sev
+                                                alert-severity-faces))))
     (insert ?\n)))
 
 (defun alert-log-clear (info)
@@ -895,7 +894,7 @@ From https://github.com/julienXX/terminal-notifier."
 ; This code was kindly borrowed from Arne Babenhauserheide:
 ; http://www.draketo.de/proj/babcore/#sec-3-14-2
 (defun x-urgency-hint (frame arg &optional source)
-  "Set the x-urgency hint for the frame to arg:
+  "Set the x-urgency hint for FRAME to ARG.
 
 - If arg is nil, unset the urgency.
 - If arg is any other value, set the urgency.
@@ -913,14 +912,13 @@ setting disappear (at least in KDE)."
     (x-change-window-property "WM_HINTS" wm-hints frame "WM_HINTS" 32 t)))
 
 (defun x-urgent (&optional arg)
-  "Mark the current emacs frame as requiring urgent attention.
+  "Mark the current Emacs frame as requiring urgent attention.
 
-With a prefix argument which does not equal a boolean value of nil,
-remove the urgency flag (which might or might not change display, depending on
-the window manager)."
+With non-nil ARG, remove the urgency flag (which might or might
+not change display, depending on the window manager)."
   (interactive "P")
-  (let (frame (car (car (cdr (current-frame-configuration)))))
-  (x-urgency-hint frame (not arg))))
+  (let ((frame (car (car (cdr (current-frame-configuration))))))
+    (x-urgency-hint frame (not arg))))
 
 (defun alert-x11-notify (info)
   (x-urgent))
@@ -1015,9 +1013,9 @@ This is found at https://github.com/nels-o/toaster."
                         remover info))))
 
 ;;;###autoload
-(defun* alert (message &key (severity 'normal) title icon category
-                       buffer mode data style persistent never-persist
-                       id)
+(cl-defun alert (message &key (severity 'normal) title icon category
+                         buffer mode data style persistent never-persist
+                         id)
   "Alert the user that something has happened.
 MESSAGE is what the user will see.  You may also use keyword
 arguments to specify additional details.  Here is a full example:
@@ -1062,7 +1060,7 @@ Here are some more typical examples of usage:
   ;; selectively filter on them.
   (alert \"This is an alert\" :title \"My Alert\"
          :category \\='some-category-or-other)"
-  (destructuring-bind
+  (cl-destructuring-bind
       (alert-buffer current-major-mode current-buffer-status
                     current-buffer-name)
       (with-current-buffer (or buffer (current-buffer))
@@ -1118,7 +1116,7 @@ Here are some more typical examples of usage:
                         nil
                         (mapcar
                          #'(lambda (condition)
-                             (case (car condition)
+                             (cl-case (car condition)
                                (:severity
                                 (memq severity (cdr condition)))
                                (:status
