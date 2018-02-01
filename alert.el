@@ -594,7 +594,7 @@ fringe gets colored whenever people chat on BitlBee:
   ;;    (ding))
   )
 
-(defun alert-message-remove (info)
+(defun alert-message-remove (_info)
   (message ""))
 
 (alert-define-style 'message :title "Display message in minibuffer"
@@ -626,7 +626,7 @@ fringe gets colored whenever people chat on BitlBee:
   (set-face-background 'fringe (cdr (assq (plist-get info :severity)
                                           alert-severity-colors))))
 
-(defun alert-fringe-restore (info)
+(defun alert-fringe-restore (_info)
   (copy-face 'alert-saved-fringe-face 'fringe))
 
 (alert-define-style 'fringe :title "Change the fringe color"
@@ -640,7 +640,7 @@ fringe gets colored whenever people chat on BitlBee:
                                              alert-severity-colors)))
   (set-face-foreground 'mode-line "white"))
 
-(defun alert-mode-line-restore (info)
+(defun alert-mode-line-restore (_info)
   (copy-face 'alert-saved-mode-line-face 'mode-line))
 
 (alert-define-style 'mode-line :title "Change the mode-line color"
@@ -920,7 +920,8 @@ not change display, depending on the window manager)."
   (let ((frame (car (car (cdr (current-frame-configuration))))))
     (x-urgency-hint frame (not arg))))
 
-(defun alert-x11-notify (info)
+(defun alert-x11-notify (_info)
+  "Call `x-urgent'."
   (x-urgent))
 
 (alert-define-style 'x11 :title "Set the X11 window property"
