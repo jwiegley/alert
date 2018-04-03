@@ -733,9 +733,14 @@ strings."
                                       "normal")))
                alert-libnotify-additional-args))
              (category (plist-get info :category)))
-        (if (and (plist-get info :persistent)
-                 (not (plist-get info :never-persist)))
-            (nconc args (list "--expire-time 0")))
+        (nconc args
+               (list "--expire-time"
+                     (number-to-string
+                      (* 1000 ; notify-send takes msecs
+                         (if (and (plist-get info :persistent)
+                                  (not (plist-get info :never-persist)))
+                             0 ; 0 indicates persistence
+                           alert-fade-time)))))
         (when category
           (nconc args
                  (list "--category"
