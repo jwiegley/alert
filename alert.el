@@ -551,12 +551,14 @@ fringe gets colored whenever people chat on BitlBee:
         (alert-legacy-log-notify mes sev len)
       ;; when we get here you better be using log4e or have your logging
       ;; functions defined
-      (if (fboundp func)
-          (apply func (list mes))
-        (when (fboundp 'log4e:deflogger)
+      (unless (fboundp func)
+	(when (fboundp 'log4e:deflogger)
           (log4e:deflogger "alert" "%t [%l] %m" "%H:%M:%S")
           (when (functionp 'alert--log-set-level)
-            (alert--log-set-level alert-log-level)))))))
+            (alert--log-set-level alert-log-level)))
+	(alert--log-enable-logging))
+      (when (fboundp func)
+        (apply func (list mes))))))
 
 (defun alert-legacy-log-notify (mes sev len)
   (with-current-buffer
