@@ -797,7 +797,7 @@ strings."
     (low      . low)
     (trivial  . low))
   "A mapping of alert severities onto Growl priority values."
-  :type '(alist :key-type symbol :value-type integer)
+  :type '(alist :key-type symbol :value-type symbol)
   :group 'alert)
 
 (defvar alert-notifications-ids (make-hash-table :test #'equal)
