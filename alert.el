@@ -732,7 +732,7 @@ strings."
                                     (if urgency
                                         (symbol-name urgency)
                                       "normal")))
-               alert-libnotify-additional-args))
+               (copy-tree alert-libnotify-additional-args)))
              (category (plist-get info :category)))
         (nconc args
                (list "--expire-time"
