@@ -868,6 +868,14 @@ From https://github.com/julienXX/terminal-notifier."
                        (alert-encode-string (plist-get info :title)))))
   (alert-message-notify info))
 
+(when (fboundp 'mac-do-applescript)
+  ;; Use built-in AppleScript support when possible.
+  (defun alert-osx-notifier-notify (info)
+    (mac-do-applescript (format "display notification %S with title %S"
+                                (alert-encode-string (plist-get info :message))
+                                (alert-encode-string (plist-get info :title))))
+    (alert-message-notify info)))
+
 (alert-define-style 'osx-notifier :title "Notify using native OSX notification" :notifier #'alert-osx-notifier-notify)
 
 (defun alert-frame-notify (info)
