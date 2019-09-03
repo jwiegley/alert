@@ -59,7 +59,7 @@ as a normal Emacs message.  But there are many more possibilities:
     fade away more.  The default is 15 minutes.
 
   - `alert-log-messages`
-    By default, all alerts are logged to *Alerts* (and to *Messages*,
+    By default, all alerts are logged to \*Alerts\* (and to \*Messages\*,
     if the `message` style is being used).  Set to nil to disable.
 
   - `alert-hide-all-notifications`
