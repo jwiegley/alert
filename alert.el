@@ -251,7 +251,7 @@ This is used by styles external to Emacs that don't understand faces."
 
 (defcustom alert-persist-idle-time 900
   "If idle this many seconds, all alerts become persistent.
-This can be overriden with the Never Persist option (:never-persist)."
+This can be overridden with the Never Persist option (:never-persist)."
   :type 'integer
   :group 'alert)
 
@@ -803,7 +803,7 @@ strings."
   "Internal store of notification ids returned by the `notifications' backend.
 Used for replacing notifications with the same id.  The key is
 the value of the :id keyword to `alert'.  An id is only stored
-here if there `alert' was called ith an :id keyword and handled
+here if there `alert' was called with an :id keyword and handled
 by the `notifications' style.")
 
 (when (featurep 'notifications)
