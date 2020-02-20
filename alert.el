@@ -406,7 +406,7 @@ For user customization, see `alert-user-configuration'.")
   :group 'alert)
 
 (defface alert-trivial-face
-  '((t (:foreground "Dark Purple")))
+  '((t (:foreground "Dark Violet")))
   "Trivial alert face."
   :group 'alert)
 
