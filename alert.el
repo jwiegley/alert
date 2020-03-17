@@ -633,9 +633,8 @@ fringe gets colored whenever people chat on BitlBee:
                     :notifier #'alert-fringe-notify
                     :remover #'alert-fringe-restore)
 
-
+(copy-face 'mode-line 'alert-saved-mode-line-face)
 (defun alert-mode-line-notify (info)
-  (copy-face 'mode-line 'alert-saved-mode-line-face)
   (set-face-background 'mode-line (cdr (assq (plist-get info :severity)
                                              alert-severity-colors)))
   (set-face-foreground 'mode-line "white"))
