@@ -2,6 +2,8 @@ Alert is a Growl-workalike for Emacs which uses a common notification
 interface and multiple, selectable "styles", whose use is fully customizable
 by the user.
 
+For desktop notifications, the [notifications package](https://www.gnu.org/software/emacs/manual/html_node/elisp/Desktop-Notifications.html) that is installed with emacs, provides a probably better alternative for most users.
+
 # For module writers
 
 Just use `alert` instead of `message` as follows:
