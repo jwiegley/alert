@@ -1089,6 +1089,7 @@ Here are some more typical examples of usage:
                            :severity severity
                            :category category
                            :buffer alert-buffer
+                           :persistent persistent
                            :mode current-major-mode
                            :id id
                            :data data))
