@@ -1035,19 +1035,21 @@ MESSAGE is what the user will see.  You may also use keyword
 arguments to specify additional details.  Here is a full example:
 
 \(alert \"This is a message\"
-       :severity \\='high          ;; The default severity is `normal'
-       :title \"Title\"           ;; An optional title
-       :category \\='example       ;; A symbol to identify the message
-       :mode \\='text-mode         ;; Normally determined automatically
-       :buffer (current-buffer) ;; This is the default
-       :data nil                ;; Unused by alert.el itself
-       :persistent nil          ;; Force the alert to be persistent;
-                                ;; it is best not to use this
-       :never-persist nil       ;; Force this alert to never persist
-       :id \\='my-id)              ;; Used to replace previous message of
-                                ;; the same id in styles that support it
-       :style \\='fringe)          ;; Force a given style to be used;
-                                ;; this is only for debugging!
+       :severity \\='high            ;; The default severity is `normal'
+       :title \"Title\"              ;; An optional title
+       :category \\='example         ;; A symbol to identify the message
+       :mode \\='text-mode           ;; Normally determined automatically
+       :buffer (current-buffer)      ;; This is the default
+       :data nil                     ;; Unused by alert.el itself
+       :persistent nil               ;; Force the alert to be persistent;
+                                     ;; it is best not to use this
+       :never-persist nil            ;; Force this alert to never persist
+       :id \\='my-id)                ;; Used to replace previous message of
+                                     ;; the same id in styles that support it
+       :style \\='fringe)            ;; Force a given style to be used;
+                                     ;; this is only for debugging!
+       :icon \\=\"mail-message-new\" ;; if style supports icon then add icon
+                                     ;; name or path here
 
 If no :title is given, the buffer-name of :buffer is used.  If
 :buffer is nil, it is the current buffer at the point of call.
@@ -1092,7 +1094,8 @@ Here are some more typical examples of usage:
                            :persistent persistent
                            :mode current-major-mode
                            :id id
-                           :data data))
+                           :data data
+                           :persistent persistent))
           matched)
 
       (if alert-log-messages
@@ -1100,8 +1103,9 @@ Here are some more typical examples of usage:
 
       (unless alert-hide-all-notifications
         (catch 'finish
-          (dolist (config (append alert-user-configuration
-                                  alert-internal-configuration))
+          (dolist (config (or (append alert-user-configuration
+                                      alert-internal-configuration)
+                              (when style '(nil))))
             (let* ((style-def (cdr (assq (or style (nth 1 config))
                                          alert-styles)))
                    (options (nth 2 config))
