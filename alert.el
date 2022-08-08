@@ -670,17 +670,33 @@ This is found in the Growl Extras: http://growl.info/extras.php."
 
 (defun alert-growl-notify (info)
   (if alert-growl-command
-      (let ((args
-             (list "--appIcon"  "Emacs"
-                   "--name"     "Emacs"
-                   "--title"    (alert-encode-string (plist-get info :title))
-                   "--message"  (alert-encode-string (plist-get info :message))
-                   "--priority" (number-to-string
-                                 (cdr (assq (plist-get info :severity)
-                                            alert-growl-priorities))))))
+      (let* ((title (alert-encode-string (plist-get info :title)))
+             (priority (number-to-string
+                        (cdr (assq (plist-get info :severity)
+                                   alert-growl-priorities))))
+             (args
+              (case system-type
+                ('windows-nt (mapcar
+                              (lambda (lst) (apply #'concat lst))
+                              `(
+                                ;; http://www.growlforwindows.com/gfw/help/growlnotify.aspx
+                                ("/i:" ,(file-truename (concat invocation-directory "../share/icons/hicolor/48x48/apps/emacs.png")))
+                                ("/t:" ,title)
+                                ("/p:" ,priority))))
+                (t (list
+                    "--appIcon"  "Emacs"
+                    "--name"     "Emacs"
+                    "--title"    title
+                    "--priority" priority)))))
         (if (and (plist-get info :persistent)
                  (not (plist-get info :never-persist)))
-            (nconc args (list "--sticky")))
+            (case system-type
+              ('windows-nt (nconc args (list "/s:true")))
+              (t (nconc args (list "--sticky")))))
+        (let ((message (alert-encode-string (plist-get info :message))))
+          (case system-type
+            ('windows-nt (nconc args (list message)))
+            (t (nconc args (list "--message" message)))))
         (apply #'call-process alert-growl-command nil nil nil args))
     (alert-message-notify info)))
 
