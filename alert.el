@@ -879,17 +879,18 @@ From https://github.com/julienXX/terminal-notifier."
 
 (defun alert-osx-notifier-notify (info)
   (apply #'call-process "osascript" nil nil nil "-e"
-         (list (format "display notification %S with title %S"
-                       (alert-encode-string (plist-get info :message))
-                       (alert-encode-string (plist-get info :title)))))
+         ;; fix https://github.com/jwiegley/alert/issues/76
+         (list (format "display notification \"%s\" with title \"%s\""
+                       (replace-regexp-in-string "[\"\\]" "\\\\\\&" (plist-get info :message))
+                       (replace-regexp-in-string "[\"\\]" "\\\\\\&" (plist-get info :title)))))
   (alert-message-notify info))
 
 (when (fboundp 'do-applescript)
   ;; Use built-in AppleScript support when possible.
   (defun alert-osx-notifier-notify (info)
-    (do-applescript (format "display notification %S with title %S"
-                            (alert-encode-string (plist-get info :message))
-                            (alert-encode-string (plist-get info :title))))
+    (do-applescript (format "display notification \"%s\" with title \"%s\""
+                            (replace-regexp-in-string "[\"\\]" "\\\\\\&" (plist-get info :message))
+                            (replace-regexp-in-string "[\"\\]" "\\\\\\&" (plist-get info :title))))
     (alert-message-notify info)))
 
 (alert-define-style 'osx-notifier :title "Notify using native OSX notification" :notifier #'alert-osx-notifier-notify)
