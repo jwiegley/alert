@@ -558,6 +558,10 @@ fringe gets colored whenever people chat on BitlBee:
             (alert--log-set-level alert-log-level)))
 	(alert--log-enable-logging))
       (when (fboundp func)
+        ;; NOTE: Temporary fix for upstream log4e
+        ;; https://github.com/aki2o/log4e/issues/9
+        ;; Check the docstring of `replace-match'
+        (setq mes (replace-regexp-in-string "\\\\" "\\\\" mes nil t))
         (apply func (list mes))))))
 
 (defun alert-legacy-log-notify (mes sev len)
