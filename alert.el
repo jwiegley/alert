@@ -467,7 +467,7 @@ definition:
                                persistent continue never-persist append)
   "Programmatically add an alert configuration rule.
 
-Normally, users should custoimze `alert-user-configuration'.
+Normally, users should customize `alert-user-configuration'.
 This facility is for module writers and users that need to do
 things the Lisp way.
 
