@@ -677,7 +677,7 @@ This is found in the Growl Extras: http://growl.info/extras.php."
                                    alert-growl-priorities))))
              (args
               (cl-case system-type
-                ('windows-nt (mapcar
+                (windows-nt (mapcar
                               (lambda (lst) (apply #'concat lst))
                               `(
                                 ;; http://www.growlforwindows.com/gfw/help/growlnotify.aspx
@@ -692,11 +692,11 @@ This is found in the Growl Extras: http://growl.info/extras.php."
         (if (and (plist-get info :persistent)
                  (not (plist-get info :never-persist)))
             (cl-case system-type
-              ('windows-nt (nconc args (list "/s:true")))
+              (windows-nt (nconc args (list "/s:true")))
               (t (nconc args (list "--sticky")))))
         (let ((message (alert-encode-string (plist-get info :message))))
           (cl-case system-type
-            ('windows-nt (nconc args (list message)))
+            (windows-nt (nconc args (list message)))
             (t (nconc args (list "--message" message)))))
         (apply #'call-process alert-growl-command nil nil nil args))
     (alert-message-notify info)))
