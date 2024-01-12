@@ -1002,6 +1002,8 @@ INFO plist."
       (let ((args (nconc
                    (when (plist-get info :title)
                      (list "-t" (alert-encode-string (plist-get info :title))))
+                   (when (plist-get info :id)
+                     (list "-i" (alert-encode-string (plist-get info :id))))
                    (list "-c" (alert-encode-string (plist-get info :message))))))
         (apply #'call-process alert-termux-command nil
                (list (get-buffer-create " *termux-notification output*") t)
