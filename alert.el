@@ -136,6 +136,7 @@
 ;;   toaster       - Use the toast notification system
 ;;   x11           - Changes the urgency property of the window in the X Window System
 ;;   termux        - Use termux-notification from the Termux API
+;;   stumpish      - Use STUMPwm Interactive SHell (stumpish) to call notifications-add
 ;;
 ;; * Defining new styles
 ;;
@@ -1010,6 +1011,19 @@ INFO plist."
 
 (alert-define-style 'termux :title "Notify using termux"
                     :notifier #'alert-termux-notify)
+
+(defcustom alert-stumpish-command (executable-find "stumpish")
+  "Path to the stumpish command."
+  :type 'file
+  :group 'alert)
+
+(defun alert-stumpish-notify (info)
+  (apply #'call-process alert-stumpish-command nil nil nil
+         (list "notifications-add"
+               (alert-encode-string (plist-get info :message))))
+  (alert-message-notify info))
+
+(alert-define-style 'stumpish :title "Use STUMPwm Interactive SHell (stumpish) to call notifications-add" :notifier #'alert-stumpish-notify)
 
 ;; jww (2011-08-25): Not quite working yet
 ;;(alert-define-style 'frame :title "Popup buffer in a frame"
