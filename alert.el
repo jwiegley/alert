@@ -880,16 +880,16 @@ From https://github.com/julienXX/terminal-notifier."
 (defun alert-osx-notifier-notify (info)
   (apply #'call-process "osascript" nil nil nil "-e"
          (list (format "display notification %S with title %S"
-                       (alert-encode-string (plist-get info :message))
-                       (alert-encode-string (plist-get info :title)))))
+                       (plist-get info :message)
+                       (plist-get info :title))))
   (alert-message-notify info))
 
 (when (fboundp 'do-applescript)
   ;; Use built-in AppleScript support when possible.
   (defun alert-osx-notifier-notify (info)
     (do-applescript (format "display notification %S with title %S"
-                            (alert-encode-string (plist-get info :message))
-                            (alert-encode-string (plist-get info :title))))
+                            (plist-get info :message)
+                            (plist-get info :title)))
     (alert-message-notify info)))
 
 (alert-define-style 'osx-notifier :title "Notify using native OSX notification" :notifier #'alert-osx-notifier-notify)
