@@ -698,7 +698,10 @@ This is found in the Growl Extras: http://growl.info/extras.php."
           (cl-case system-type
             (windows-nt (nconc args (list message)))
             (t (nconc args (list "--message" message)))))
-        (apply #'call-process alert-growl-command nil nil nil args))
+        (let* ((process-name (file-name-nondirectory alert-growl-command))
+         (process-connection-type nil)
+         (proc (apply #'start-process process-name nil alert-growl-command args)))
+        proc))
     (alert-message-notify info)))
 
 (alert-define-style 'growl :title "Notify using Growl"
@@ -772,8 +775,11 @@ strings."
         (nconc args (list
                      (alert-encode-string (plist-get info :title))
                      (alert-encode-string (plist-get info :message))))
-        (apply #'call-process alert-libnotify-command nil
-               (list (get-buffer-create " *libnotify output*") t) nil args))
+        (let* ((process-name (file-name-nondirectory alert-libnotify-command))
+         (buffer (get-buffer-create " *libnotify output*"))
+         (process-connection-type nil)
+         (proc (apply #'start-process process-name buffer alert-libnotify-command args)))
+        proc))
     (alert-message-notify info)))
 
 (alert-define-style 'libnotify :title "Notify using libnotify"
@@ -871,17 +877,22 @@ From https://github.com/julienXX/terminal-notifier."
              (list "-title"   (alert-encode-string (plist-get info :title))
                    "-appIcon" (or (plist-get info :icon) alert-notifier-default-icon)
                    "-message" (alert-encode-string (plist-get info :message)))))
-        (apply #'call-process alert-notifier-command nil nil nil args))
+        (let* ((process-name (file-name-nondirectory alert-notifier-command))
+         (process-connection-type nil)
+         (proc (apply #'start-process process-name nil alert-notifier-command args)))
+        proc))
     (alert-message-notify info)))
 
 (alert-define-style 'notifier :title "Notify using terminal-notifier"
                     :notifier #'alert-notifier-notify)
 
 (defun alert-osx-notifier-notify (info)
-  (apply #'call-process "osascript" nil nil nil "-e"
-         (list (format "display notification %S with title %S"
-                       (plist-get info :message)
-                       (plist-get info :title))))
+  (let* ((process-connection-type nil)
+         (proc (apply #'start-process "osascript" nil "osascript" "-e"
+                      (list (format "display notification %S with title %S"
+                                    (plist-get info :message)
+                                    (plist-get info :title))))))
+        proc)
   (alert-message-notify info))
 
 (when (fboundp 'do-applescript)
@@ -981,7 +992,10 @@ This is found at https://github.com/nels-o/toaster."
                    "-m" (alert-encode-string (plist-get info :message))
                    "-p" (expand-file-name (or (plist-get info :icon) alert-toaster-default-icon))
                    )))
-        (apply #'call-process alert-toaster-command nil nil nil args))
+        (let* ((process-name (file-name-nondirectory alert-toaster-command))
+         (process-connection-type nil)
+         (proc (apply #'start-process process-name nil alert-toaster-command args)))
+        proc))
     (alert-message-notify info)))
 
 (alert-define-style 'toaster :title "Notify using Toaster"
@@ -1003,9 +1017,11 @@ INFO plist."
                    (when (plist-get info :title)
                      (list "-t" (alert-encode-string (plist-get info :title))))
                    (list "-c" (alert-encode-string (plist-get info :message))))))
-        (apply #'call-process alert-termux-command nil
-               (list (get-buffer-create " *termux-notification output*") t)
-               nil args))
+        (let* ((process-name (file-name-nondirectory alert-termux-command))
+         (buffer (get-buffer-create " *termux-notification output*"))
+         (process-connection-type nil)
+         (proc (apply #'start-process process-name buffer alert-termux-command args)))
+        proc))
     (alert-message-notify info)))
 
 (alert-define-style 'termux :title "Notify using termux"
