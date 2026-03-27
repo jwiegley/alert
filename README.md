@@ -120,8 +120,9 @@ The builtins are:
 | notifier      | Uses terminal-notifier on OS X, if it is on the PATH               |
 | osx-notifier  | Native OSX notification using AppleScript                          |
 | toaster       | Use the toast notification system                                  |
-| x11           | Changes the urgency property of the window in the X Window System
-| termux        | Use `termux-notification` from the Termux API                     |
+| x11           | Changes the urgency property of the window in the X Window System  |
+| termux        | Use `termux-notification` from the Termux API                      |
+| android-notifications | Use `android-notifications-notify` from the native Emacs Android port |
 
 # Defining new styles
 
